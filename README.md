@@ -31,6 +31,8 @@ After the triangle is drawn the user can move it using the arrow keys. The user 
 4. move the triangle by pressing the arrow keys.
 
 ## screenshots
+#### menu
+![Screenshot](screenshots/enterance.png)
 #### 12*12 Triangle
 ![Screenshot](screenshots/triangle_12_12.png)
 ![Screenshot](screenshots/triangle_12_12-2.png)
