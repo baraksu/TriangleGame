@@ -19,12 +19,10 @@
 **Year Of Submission:** 2023  
 
 ## What does the program do?
-<a name="what-does-the-program-do"/>
 The program takes height and width numbers from the user and draws an isosceles triangle.
 After the triangle is drawn the user can move it using the arrow keys. The user can press multiple keys a once and the triangle will be moved by the order the keys were pressed using the buffer.
 
 ## Usage
-<a name="usage"/>
 1. execute the file using an assembly 8086 emulator.
 2. insert the triagle size - height and width
 3. wait until the triangle is drawn.
@@ -44,7 +42,6 @@ After the triangle is drawn the user can move it using the arrow keys. The user 
 
 
 ## development stages
-<a name="development-stages"/>
 1. Drawing the triangle.
 2. Writing the **MoveTriangle** proc.
 3. Designing the menu with the big title and the instructions to the program.
@@ -54,12 +51,10 @@ After the triangle is drawn the user can move it using the arrow keys. The user 
 
 
 ## future features
-<a name="future-features"/>
 I would add:
 1. better ui
 2. support diagonal movement 
 
 
 # reflection
-<a name="reflection"/>
-This project helped me get to know stages in software development, learn new skills, understand the language better, learn to solve problems and more importantly connect to the field 
+This project helped me get to know stages in software development, learn new skills, understand the language better, learn to solve problems and more importantly connect to the field.
