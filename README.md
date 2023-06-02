@@ -8,15 +8,15 @@
 [Future Features](#future-features)  
 [Reflection](#reflection)  
 
-## Headers
+## project info
 
-**Project Name:** Triangle Game 
-**Programmar:** Omer Polak 
-**Grade:** 10 
-**Class:** 3
-**Teacher** Barak Suberri 
-**School:** Yeshivat Bnei Aquiva Givat Shmuel 
-**Year Of Submission:** 2023  
+**Project Name:** Triangle Game   
+**Programmar:** Omer Polak   
+**Grade:** 10   
+**Class:** 3  
+**Teacher** Barak Suberri   
+**School:** Yeshivat Bnei Aquiva Givat Shmuel   
+**Year Of Submission:** 2023    
 
 ## What does the program do?
 The program takes height and width numbers from the user and draws an isosceles triangle.
