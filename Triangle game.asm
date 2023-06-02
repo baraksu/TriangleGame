@@ -7,10 +7,11 @@
     width  DW ?     ; Triangle width
     horizontal_move dw 90h ; triangle horizontal loction
     vertical_move dw 65h   ; triangle vertical loction
-    screen_height dw 200d  ; screen height
-    screen_width dw 320d   ;screen width
+    ;screen_height dw 200d  ; screen height
+    ;screen_width dw 320d   ;screen width
     rowLength dw ?         ; the current legth of the row drawn
     space dw ?             ; the amount of space required to be in current row
+    triangle_color db ?
     logo1 db   '    _____     _                   _       ' , 13,10,
           db   '   |_   __ __(_) __ _ _ __   __ _| | ___  ' , 13,10,
           db   '     | || '__| |/ _` | '_ \ / _` | |/ _ \ ' , 13,10,
@@ -28,6 +29,7 @@
           db   '   the numbers must be between 10-99 ' ,13,10,10, '$' 
     msg2  db   '   Enter height:', 13,10,10,'   ','$' 
     msg3  db   13,10,10, '   Enter width:', 13,10,10,'   ','$'
+    msg4  db   13,10,10, '   Enter triangle color (an hexadecimal number beween 0 - f:', 13,10,10,'   ','$'
     error1 db  '   invalid number. type again.',13,10,10, '$'
     errorOutOfBound db '   out of bounds.',13,10,10, '$' 
 .CODE
@@ -41,6 +43,7 @@ Main proc
     MOV DS, AX                               
     call ClearScreen
     call menu 
+    1:
     PUSH height ; PUSH height into stack 
     PUSH width  ; PUSH width into stack 
     CALL WindowSettings
@@ -98,6 +101,16 @@ menu proc
     
     call InputNums
     call arrToNum
+    
+    mov ah, 09h
+    mov dx, offset msg4
+    int 21h
+    
+    mov ah, 1
+    int 21h
+    
+    mov triangle_color, al
+    
     mov al, inputNum
     mov width, cx
     popa
@@ -210,16 +223,16 @@ DrawTriangle proc
         cmp bx, 0
         je doneDrawing
         
-        MOV AL, 0Fh     ; Set pixel color      
+        MOV AL, triangle_color     ; Set pixel color      
         MOV AH, 0CH
         
-        loop2:
-            INT 10H
-            inc cx
-            dec bx
-            cmp bx, 0
-            jne loop2
-        
+        ;loop2:
+        ;    INT 10H
+        ;    inc cx
+        ;    dec bx
+        ;    cmp bx, 0
+        ;    jne loop2
+        call DrawLine
 
         dec dx  
         dec [bp+6]
@@ -235,6 +248,15 @@ DrawTriangle proc
     pop bp          
     RET 4 ; clear stack
 endp DrawTriangle
+DrawLine proc
+    loop2:
+        INT 10H
+        inc cx
+        dec bx
+        cmp bx, 0
+        jne loop2
+        ret
+DrawLine endp        
 
 MoveTriangle proc
 ;This proc is checking if there is something in the buffer,
