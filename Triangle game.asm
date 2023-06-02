@@ -352,7 +352,7 @@ errorHandler proc
     mov ah, 09h
     mov dx, offset error1
     int 21h
-    jmp startInput 
+    jmp  
     ret 
 errorHandler endp
 END START
