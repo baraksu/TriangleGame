@@ -1,7 +1,10 @@
 # TriangleGame
-
-
-# project info
+##### Table of Contents  
+[What does the program do?](#What does the program do?)  
+[Emphasis](#emphasis)  
+...snip...    
+<a name="headers"/>
+## Headers
 
 **Project Name:** Triangle Game 
 **Programmar:** Omer Polak 
@@ -24,6 +27,13 @@ After the triangle is drawn the user can move it using the arrow keys. The user 
 4. move the triangle by pressing the arrow keys.
 
 ## screenshots
+#### 12*12 Triangle
+![Screenshot](screenshots/triangle_12_12.png)
+![Screenshot](screenshots/triangle_12_12-2.png)
+![Screenshot](screenshots/triangle_12_12-3.png)
+#### 32*14 Triangle
+![Screenshot](screenshots/triangle_32_14.png)
+![Screenshot](screenshots/triangle_32_14_2.png)
 
 
 
