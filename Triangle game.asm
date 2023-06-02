@@ -2,16 +2,15 @@
 .STACK 100h
 
 .DATA
-    ; The emulator is slow so you need to put low numbers in it to work acceptably fast.
-    inputNum db 2 dup(0) ; Allocate space for 100 characters
+    inputNum db 2 dup(0) ; Allocate space for 2 characters
     height DW ?     ; Triangle height
     width  DW ?     ; Triangle width
-    horizontal_move dw 90h
-    vertical_move dw 65h
-    screen_height dw 200d
-    screen_width dw 320d
-    rowLength dw ?
-    space dw ?
+    horizontal_move dw 90h ; triangle horizontal loction
+    vertical_move dw 65h   ; triangle vertical loction
+    screen_height dw 200d  ; screen height
+    screen_width dw 320d   ;screen width
+    rowLength dw ?         ; the current legth of the row drawn
+    space dw ?             ; the amount of space required to be in current row
     logo1 db   '    _____     _                   _       ' , 13,10,
           db   '   |_   __ __(_) __ _ _ __   __ _| | ___  ' , 13,10,
           db   '     | || '__| |/ _` | '_ \ / _` | |/ _ \ ' , 13,10,
@@ -33,22 +32,23 @@
     errorOutOfBound db '   out of bounds.',13,10,10, '$' 
 .CODE
 START:
-Main proc 
+Main proc
+    ;this is the main proc that Scheduling the main procs of this program 
     PUSH BP
     MOV BP, SP
 
-    MOV AX, @DATA   ; Initialize data segment
+    MOV AX, @DATA   ; initialize data segment
     MOV DS, AX                               
     call ClearScreen
-    call menu ;not working
-    PUSH height
-    PUSH width
+    call menu 
+    PUSH height ; PUSH height into stack 
+    PUSH width  ; PUSH width into stack 
     CALL WindowSettings
 
     CALL DrawTriangle
     
 
-    input: ;everything from this part is still not working
+    input:                
         CALL MoveTriangle
         PUSH height
         PUSH width
@@ -62,6 +62,9 @@ Main proc
 endp Main
 
 menu proc
+; This proc is the menu to the program, 
+;it explains it and calls InputNums and arrToNum 
+;that input the chars and make it a numerical value.          
     push bp
     mov bp, sp
     pusha
@@ -102,6 +105,9 @@ menu proc
     ret
 endp menu
 InputNums proc
+; This proc is reading the user input of height and width and writes it into inputNum. 
+;It checks if the num is valid and lets the user to type
+;up to 2 digits.        
     mov bp, sp
     push bp
     push si
@@ -119,7 +125,7 @@ InputNums proc
         ja notNum
         
         sub al, '0'
-        ; Store the number in the input buffer
+        ; Store the number in the array
         mov [bx+si], al
         
         inc si
@@ -147,14 +153,18 @@ InputNums proc
 endp InputNums
 
 
-; Procedure to convert the array with digits to a number
+
 arrToNum proc
+; Procedure to convert the array with digits to a number
+; it goes through the array, 
+; multiplies every digit by its position in the array and returns cx as the result
+; example: 1,2 => 1*10 + 2*1 = 12
     mov bp,sp
     push bp
     push si
     xor cx,cx
     mov dx, 10
-    xor ax, ax ; Clear AX (result)
+    xor ax, ax 
     xor si,si
     lea bx, inputNum 
     arr_loop:
@@ -167,6 +177,8 @@ arrToNum proc
         imul dx
         add cx, ax
         inc si
+        cmp si, 2
+        je done
         mov dx, 1
         jmp arr_loop
     done:
@@ -179,6 +191,10 @@ arrToNum endp
 
 
 DrawTriangle proc
+;This proc draws the triangle.
+;it gets the horizontal_move and vertical_move of the triangle,
+;then calls calcRow to calc current row's length.
+;It draws a row and calls calcSpace to calc the space to do next row. 
     PUSH BP
     MOV BP, SP
     
@@ -220,7 +236,9 @@ DrawTriangle proc
     RET 4 ; clear stack
 endp DrawTriangle
 
-MoveTriangle proc 
+MoveTriangle proc
+;This proc is checking if there is something in the buffer,
+;then, if it's an arrow it changes the values of vertical_move and horizontal_move  
     waitForInput:
         mov ah, 0h
         int 16h
@@ -257,20 +275,92 @@ MoveTriangle proc
         jmp move
      
     move: 
-        call KeepBounds        
+       ;to do: ;call KeepBounds        
     ret     
 endp MoveTriangle
+
+    
+WindowSettings proc
+;allows using graphical interface. 
+    MOV AH, 0
+    MOV AL, 13h ;interupt 10h mode 0, 13
+    INT 10H
+    RET
+endp WindowSettings
+
+ClearScreen proc
+;clears the screan and applies red and white colors to backround and text.    
+    mov ah, 09h
+    mov cx, 1000h
+    mov al, 20h
+    mov bl, 4Fh ; This is red & White.
+    INT 10H
+    ret
+endp ClearScreen
+
+calcRow proc
+;calculates the length of the next row using Thales theorem,
+;gets the currnt height, total width and total height
+;and saves the row length in rowLength.    
+    push bp
+    mov bp, sp
+    
+    push dx
+    cwd  ; clear dx 
+    
+    mov ax, [bp+10] ;current height 
+    mul width
+    mov bx, height
+    idiv bx
+     
+    pop dx
+    mov rowLength, ax 
+    
+    pop bp
+    ret
+endp calcRow
+
+calcSpace proc   
+; calculates the space needed to print in this row
+; using (width - current width) / 2     
+    push bp
+    mov bp, sp
+    
+    push dx
+    mov ax, width
+    mov bx, [bp+8] ; current width
+    
+    sub ax, bx
+    mov bx, 2
+    cmp ax, 0
+    je ifZero
+    xor dx, dx
+    idiv bx
+    jmp next 
+    ifZero:
+        mov ax, 0
+    next:    
+    mov space, ax
+    pop dx
+    pop bp
+    ret
+endp calcSpace
+
+errorHandler proc
+;handels invalid input error
+;print a message and returns to startInput
+    mov ah, 09h
+    mov dx, offset error1
+    int 21h  
+    ret startInput
+errorHandler endp
+END START
+
+;to do:
 
 KeepBounds proc
     push bp
     mov bp, sp
-    ;vertical_move
-    ;horizontal_move
-    ;height
-    ;width
-    ;screen_height
-    ;screen_width
-    ; check height
     mov ax, height
     add ax, vertical_move 
     cmp ax, screen_height
@@ -306,71 +396,5 @@ ErrorHandlerBound proc
     
     
     pop bp
-    ret  
-WindowSettings proc 
-    MOV AH, 0
-    MOV AL, 13h ;interupt 10h mode 0, 13
-    INT 10H
-    RET
-endp WindowSettings
-
-ClearScreen proc   
-    mov ah, 09h
-    mov cx, 1000h
-    mov al, 20h
-    mov bl, 4Fh ; This is Blue & White.
-    INT 10H
     ret
-endp ClearScreen
-
-calcRow proc   
-    push bp
-    mov bp, sp
-    
-    push dx
-    cwd  ; clear dx 
-    
-    mov ax, [bp+10] ;current height 
-    mul width
-    mov bx, height
-    idiv bx
-     
-    pop dx
-    mov rowLength, ax 
-    
-    pop bp
-    ret
-endp calcRow
-
-calcSpace proc   
-    
-    push bp
-    mov bp, sp
-    
-    push dx
-    mov ax, width
-    mov bx, [bp+8] ; current width
-    
-    sub ax, bx
-    mov bx, 2
-    cmp ax, 0
-    je ifZero
-    xor dx, dx
-    idiv bx
-    jmp next 
-    ifZero:
-        mov ax, 0
-    next:    
-    mov space, ax
-    pop dx
-    pop bp
-    ret
-endp calcSpace
-
-errorHandler proc
-    mov ah, 09h
-    mov dx, offset error1
-    int 21h  
-    ret startInput
-errorHandler endp
-END START                      
+ErrorHandlerBound endp                        
